@@ -1,7 +1,6 @@
 use std::mem::size_of_val;
 
 struct WgpuContext {
-    instance: wgpu::Instance,
     device: wgpu::Device,
     queue: wgpu::Queue,
     pipeline: wgpu::ComputePipeline,
@@ -17,6 +16,7 @@ impl WgpuContext {
             .request_adapter(&wgpu::RequestAdapterOptions::default())
             .await
             .unwrap();
+        log::info!("Using backend: {:?}", adapter.get_info().backend);
         let (device, queue) = adapter
             .request_device(&wgpu::DeviceDescriptor::default(), None)
             .await
@@ -93,7 +93,6 @@ impl WgpuContext {
         });
 
         WgpuContext {
-            instance,
             device,
             queue,
             pipeline,
@@ -111,11 +110,6 @@ async fn run() {
         input[n] = n as u32;
     }
     compute(&mut input, &ctx).await;
-
-    // Print the results.
-    for n in 0..256 {
-        log::info!("{}: {}", n, input[n]);
-    }
 }
 
 async fn compute(host_buf: &mut [u32], context: &WgpuContext) {
