@@ -2,6 +2,7 @@
 name = "sophrosyne"
 version = "0.1.0"
 edition = "2021"
+build = "build.rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -9,8 +10,15 @@ edition = "2021"
 winit = "0.28"
 env_logger = "0.10"
 log = "0.4"
-wgpu = "0.19.1"
+wgpu = { version = "0.19.1", features = ["spirv"]}
 pollster = "0.3.0"
 bytemuck = "1.14.3"
 flume = "0.11.0"
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "sophrosyne"
+path = "src/main.rs"
 
