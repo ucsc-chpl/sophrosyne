@@ -1,10 +1,9 @@
 use core::panic;
-use std::process::Command;
 use std::fs;
 use std::io::{self, Write};
 use std::path::Path;
+use std::process::Command;
 use std::str;
-
 
 fn main() {
     // Check if 'clspv' is availible in PATH.
@@ -42,12 +41,17 @@ fn main() {
                     .expect("Failed to execute clspv");
 
                 if !output.status.success() {
-                     // Write error message to stderr and print stderr of the command
+                    // Write error message to stderr and print stderr of the command
                     writeln!(io::stderr(), "clspv failed to execute").unwrap();
-                    writeln!(io::stderr(), "clspv Error Output: {}", str::from_utf8(&output.stderr).unwrap()).unwrap();
+                    writeln!(
+                        io::stderr(),
+                        "clspv Error Output: {}",
+                        str::from_utf8(&output.stderr).unwrap()
+                    )
+                    .unwrap();
                     std::process::exit(1);
-                }                
-                
+                }
+
                 // Tells cargo to rerun this build script if the shader file changes.
                 println!("cargo:rerun-if-changed={}", path.to_str().unwrap());
             }
