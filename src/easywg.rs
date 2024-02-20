@@ -1,8 +1,14 @@
 use std::mem::size_of_val;
 use std::path::Path;
+use regex::Regex;
 
 fn read_wgsl<P: AsRef<Path>>(path: P) -> String {
     std::fs::read_to_string(path).expect("Failed to read WGSL file")
+}
+
+fn modify_workgroup_size(wgsl_code: &str, new_size: u32) -> String {
+    let re = Regex::new(r"@workgroup_size\(\d+\)").unwrap();
+    re.replace(wgsl_code, format!("@workgroup_size({})", new_size).as_str()).to_string()
 }
 
 pub struct Device {
@@ -48,7 +54,7 @@ impl Device {
         num_workgroups: u32,
         workgroup_size: u32,
     ) {
-        let shader_src = read_wgsl(wgsl_path);
+        let shader_src = modify_workgroup_size(&read_wgsl(wgsl_path), workgroup_size);
         let shader = self
             .device
             .create_shader_module(wgpu::ShaderModuleDescriptor {
