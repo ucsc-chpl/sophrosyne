@@ -23,6 +23,7 @@ async fn run() {
         .await;
 
     // Print results.
+    // Results are automatically mapped back to the host.
     for i in 0..n {
         log::info!("{} + {} = {}", h_a[i], h_b[i], h_c[i]);
     }
