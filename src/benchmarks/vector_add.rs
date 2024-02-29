@@ -1,5 +1,6 @@
 use easywg::*;
 
+#[allow(unused)]
 pub async fn vector_add() {
     let device = Device::new().await;
 
