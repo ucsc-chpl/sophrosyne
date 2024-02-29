@@ -1,5 +1,5 @@
-use std::path::Path;
 use regex::Regex;
+use std::path::Path;
 
 fn read_wgsl<P: AsRef<Path>>(path: P) -> String {
     std::fs::read_to_string(path).expect("Failed to read WGSL file")
@@ -7,7 +7,8 @@ fn read_wgsl<P: AsRef<Path>>(path: P) -> String {
 
 fn modify_workgroup_size(wgsl_code: &str, new_size: u32) -> String {
     let re = Regex::new(r"@workgroup_size\(\d+\)").unwrap();
-    re.replace(wgsl_code, format!("@workgroup_size({})", new_size).as_str()).to_string()
+    re.replace(wgsl_code, format!("@workgroup_size({})", new_size).as_str())
+        .to_string()
 }
 
 pub struct Device {
