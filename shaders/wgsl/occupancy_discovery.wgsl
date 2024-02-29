@@ -2,6 +2,9 @@
 @group(0) @binding(1) var<storage, read_write> poll: array<u32>;
 @group(0) @binding(2) var<storage, read_write> scratchpad: array<atomic<u32>>;
 
+const LOCAL_MEM_SIZE: u32 = 1;
+var<workgroup> local_mem: array<u32, LOCAL_MEM_SIZE>;
+
 @workgroup_size(1)
 @compute 
 fn main(
@@ -15,12 +18,15 @@ fn main(
             atomicAdd(&count[0], 1u);
 
             // Do busy so other workgroups can participate.
-            for (var i = 0; i < 1000; i++) {
-                atomicAdd(&scratchpad[0], 1u);
+            for (var i = 0; i < 100000; i++) {
+                atomicAdd(&scratchpad[(i + i32(global_id.x))  % 10000], 1u);
             }
 
             // Close the poll.
             poll[0] = 1u;
         }
+
+        // Do work on local memory so it's not compiled away.
+        local_mem[global_id.x % LOCAL_MEM_SIZE] += 1u;
     }
 }
