@@ -1,5 +1,6 @@
 use easywg::*;
 
+#[allow(unused)]
 pub async fn occupancy_discovery() {
     let device = Device::new().await;
 
@@ -10,12 +11,14 @@ pub async fn occupancy_discovery() {
     let workgroup_size = 1;
 
     // Define host buffers.
-    let mut h_count = vec![0u32; 0];
+    let mut h_count = vec![0u32; 1];
+    let mut h_poll = vec![0u32; 1];
+    let mut h_scratchpad = vec![0u32; 10_000];
 
     device
         .launch_compute(
             "../shaders/wgsl/occupancy_discovery.wgsl",
-            &mut vec![&mut h_count],
+            &mut vec![&mut h_count, &mut h_poll, &mut h_scratchpad],
             num_workgroups,
             workgroup_size,
         )
@@ -23,4 +26,5 @@ pub async fn occupancy_discovery() {
 
     // Print results.
     // Results are automatically mapped back to the host.
+    println!("Count: {}", h_count[0]);
 }
