@@ -21,7 +21,7 @@ pub async fn occupancy_discovery() {
 
         device
             .launch_compute(
-                "../shaders/wgsl/occupancy_discovery.wgsl",
+                "shaders/wgsl/occupancy_discovery.wgsl",
                 &mut vec![&mut h_count, &mut h_poll, &mut h_scratchpad],
                 num_workgroups,
                 workgroup_size,
