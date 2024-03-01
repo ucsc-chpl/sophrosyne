@@ -17,7 +17,7 @@ fn main(
             // Poll is open, increment counter.
             atomicAdd(&count[0], 1u);
 
-            // Do busy so other workgroups can participate.
+            // Do busy work so other workgroups can participate.
             for (var i = 0; i < 100000; i++) {
                 atomicAdd(&scratchpad[(i + i32(global_id.x))  % 10000], 1u);
             }
