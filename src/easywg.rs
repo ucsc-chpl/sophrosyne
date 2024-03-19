@@ -14,8 +14,7 @@ fn modify_workgroup_size(wgsl_code: &str, new_size: u32) -> String {
 pub fn list_devices() -> Vec<wgpu::AdapterInfo> {
     let instance = wgpu::Instance::default();
     let adapters = instance.enumerate_adapters(wgpu::Backends::all());
-    let mut adapter_info = vec!();
-    println!("Available GPU Devices:");
+    let mut adapter_info = vec![];
     for adapter in adapters {
         adapter_info.push(adapter.get_info());
     }
