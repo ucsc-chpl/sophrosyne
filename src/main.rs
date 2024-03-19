@@ -2,7 +2,6 @@ mod benchmarks;
 
 use clap::Parser;
 use std::process;
-use wgpu::AdapterInfo;
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
@@ -30,9 +29,17 @@ fn main() {
         }
         return;
     } else {
+        // Creates a logger, filtering out all log messages except those from this module.
+        env_logger::builder()
+            .filter_level(log::LevelFilter::Off)
+            .filter_module(module_path!(), log::LevelFilter::Info)
+            .filter_module("easywg", log::LevelFilter::Info)
+            .format_timestamp_nanos()
+            .init();
+
         match args.device {
-            Some(device) => {
-                println!("Device: {}", device);
+            Some(_) => {
+                // TODO: Pass selected device to benchmark functions.
                 match args.benchmark.as_deref() {
                     Some("occupancy_discovery") => {
                         pollster::block_on(benchmarks::occupancy_discovery());
@@ -44,7 +51,7 @@ fn main() {
                         pollster::block_on(benchmarks::atomic_throughput());
                     }
                     _ => {
-                        eprintln!("No benchmark specified.");
+                        eprintln!("Please specify a benchmark.");
                         process::exit(1);
                     }
                 }
@@ -55,16 +62,4 @@ fn main() {
             }
         }
     }
-
-    // Creates a logger, filtering out all log messages except those from this module.
-    env_logger::builder()
-        .filter_level(log::LevelFilter::Off)
-        .filter_module(module_path!(), log::LevelFilter::Info)
-        .filter_module("easywg", log::LevelFilter::Info)
-        .format_timestamp_nanos()
-        .init();
-
-    // Needs to be run in an async environment.
-    // Pollster provides a simple way to do this (should work on all platforms).
-    pollster::block_on(benchmarks::occupancy_discovery());
 }
